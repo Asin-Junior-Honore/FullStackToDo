@@ -13,7 +13,7 @@ Welcome to my Full Stack To-Do App! This application allows you to manage your t
 ## Technologies Used
 
 - **Frontend:**
-  - HTML/CSS
+  - EJS/CSS
   - JavaScript
 - **Backend:**
   - Node.js
@@ -21,6 +21,7 @@ Welcome to my Full Stack To-Do App! This application allows you to manage your t
   - MongoDB
 - **Deployment:**
   - render
+  - link: https://fullstacktodo-asinhonore.onrender.com/
 
 
 ## Usage
