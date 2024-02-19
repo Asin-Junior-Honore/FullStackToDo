@@ -1,0 +1,23 @@
+# GET http://localhost:3000/todos
+
+# ###
+# GET http://localhost:3000/todos/65cfead43acc9871fa773237
+
+# ###
+# POST http://localhost:3000/todos
+# Content-Type: application/json
+
+# {
+#     "taskTitle":"junior",
+#     "taskDescription":"asin_tech"
+# }
+
+
+# ###
+# PATCH  http://localhost:3000/todos/65d2611c490593983ca03738
+# Content-Type: application/json
+
+# {
+#     "taskTitle":"frog",
+#     "taskDescription":"lizard"
+# }
