@@ -1,5 +1,6 @@
 require("dotenv").config();
-const { error } = require("console");
+const cors = require("cors");
+// const { error } = require("console");
 const express = require("express");
 const app = express();
 app.set("view engine", "ejs");
@@ -11,7 +12,7 @@ const Port = process.env._port;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
 app.use(express.json());
-
+app.use(cors());
 const todosRouter = require("./routes/todos");
 app.use("/todos", todosRouter);
 
