@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 
 mongoose.connect(process.env.Databaseurl);
 const db = mongoose.connection;
-const Port = process.env._port;
+const Port = 3000;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
 app.use(express.json());
