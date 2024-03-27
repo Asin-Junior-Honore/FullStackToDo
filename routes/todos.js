@@ -3,11 +3,10 @@ const router = express.Router();
 const User = require("../models/user");
 const Todo = require("../models/todos");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
 const cookieParser = require("cookie-parser");
 
-const secretKey =
-  process.env.JWT_SECRET || crypto.randomBytes(64).toString("hex");
+// Generate JWT secret key
+const secretKey = require("crypto").randomBytes(64).toString("hex");
 
 router.use(cookieParser());
 router.use(express.urlencoded({ extended: true }));
