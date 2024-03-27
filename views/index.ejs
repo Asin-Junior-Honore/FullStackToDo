@@ -133,7 +133,7 @@
     }
 
 
-    
+
     .loader,
     .loader:before,
     .loader:after {
@@ -238,13 +238,13 @@
             <h2>crud-app</h2>
             <h4 id="todos-count"></h4>
         </div>
-        <!-- index.ejs -->
 
         <form id="myForm">
-            <input type="text" id="name" name="name" placeholder="Enter Task Title">
-            <input type="text" id="description" name="description" placeholder="Enter Task Details">
-            <input type="submit" value="Submit Task">
+            <input type="text" id="name" name="taskTitle" placeholder="Task Title">
+            <input type="text" id="description" name="taskDescription" placeholder="Task Description">
+            <button type="submit">Submit</button>
         </form>
+
 
         <div>
             <span class="loader-parent">
@@ -254,15 +254,16 @@
             </div>
 
         </div>
-        <!-- index.ejs -->
-
-        <h1 id="sorry"></h1>
+        <h5 id="sorry"></h5>
 
     </main>
+
+
     <script>
         let todos_count = document.getElementById("todos-count");
         let loader = document.querySelector('.loader-parent');
-        let sorry = document.getElementById('sorry')
+        let sorry = document.getElementById('sorry');
+
         document.getElementById("myForm").addEventListener("submit", async function (event) {
             event.preventDefault();
 
@@ -270,74 +271,80 @@
             const description = document.getElementById("description").value;
 
             if (name.trim() === "" || description.trim() === "") {
-                // Display an alert message to the user
                 alert("Please enter both title and description before submitting the form.");
-                return; // Exit the function early
+                return;
             }
 
-            const formData = new FormData(this);
-            const taskTitle = formData.get("name");
-            const taskDescription = formData.get("description");
+            const taskData = {
+                taskTitle: name,
+                taskDescription: description
+            };
 
-            ///POST request
+            const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+
             try {
-                const response = await fetch("http://localhost:3000/todos", {
+                const response = await fetch("http://localhost:3000/api/todos/", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ taskTitle, taskDescription })
+                    body: JSON.stringify(taskData)
                 });
 
                 if (!response.ok) {
-                    throw new Error(alert("Failed to submit task😔"));
+                    throw new Error("Failed to submit task😔");
                 }
             } catch (error) {
-                console.error("Error:", error.message);
+                // console.error("Error:", error.message);
             } finally {
-                // Clear the input fields
                 document.getElementById("name").value = "";
                 document.getElementById("description").value = "";
-
-                // Fetch data after clearing input fields
                 fetchData();
             }
         });
 
-
-        ///GET request
         function fetchData() {
+            const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
 
-            fetch('http://localhost:3000/todos')
+            fetch('http://localhost:3000/api/todos/userTodos', {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
                 .then(response => {
                     if (!response.ok) {
-                        // //console.log(response)
-                        throw new Error(alert('Network response was not ok📶'));
+                        if (response.status === 401) {
+                            window.location.href = "/login";
+                        } else {
+                            // console.log(response.statusText);
+                        }
                     }
-                    return response.json(); // Parse the JSON data
+                    return response.json();
                 })
                 .then(data => {
-                    // Handle the JSON data
-                    if (data.length == 0) {
-                        sorry.textContent = "sorry no todos in database😢"
-                    } else {
-                        sorry.style.display = 'none'
-                        const htmlContent = generateHTML(data);
-                        document.getElementById('dataContainer').innerHTML = htmlContent;
-                        //console.log(data);
-                        todos_count.innerHTML = ` ${data.length} Task(s)`
+                    // console.log(data)
+                    if (data.message === "No todos found for the user") {
+                        sorry.textContent = "Sorry,you do not have any todos in database😢";
+                        loader.style.display = "none";
+                        return;
                     }
 
+                    sorry.style.display = 'none';
+                    todos_count.innerHTML = ` ${data.length} Task(s)`;
+
+                    const htmlContent = generateHTML(data);
+                    document.getElementById('dataContainer').innerHTML = htmlContent;
                 })
                 .catch(error => {
-                    // Handle errors
-                    //console.error('There was a problem with the fetch operation:', error);
+                    // console.error('There was a problem with the fetch operation:', error);
+                    sorry.textContent = "Sorry, there was an error fetching todos😢";
                 })
                 .finally(() => {
                     loader.style.display = "none";
-                })
-
+                });
         }
+
 
         function generateHTML(data) {
             let html = '<div class="container">';
@@ -348,7 +355,7 @@
                         <h3 class='task-title'>TaskTitle: ${item.taskTitle} </h3>
                         <p class='task-descriptio'>TaskDescription: ${item.taskDescription} </p>
                         <button onclick="deleteSubscriber('${item._id}')">Delete</button>
-                        <button onclick="editTask('${item._id}', '${item.taskTitle}', '${item.taskDescription}')" >Edit</button>
+                        <button onclick="editTask('${item._id}', '${item.taskTitle}', '${item.taskDescription}')">Edit</button>
                     </div>
                 `;
             });
@@ -360,39 +367,30 @@
             fetchData()
         }
 
-        ///DELETE request
         async function deleteSubscriber(id) {
-
-
-
-
             try {
-                const response = await fetch(`http://localhost:3000/todos/${id}`, {
+                const response = await fetch(`http://localhost:3000/api/todos/${id}`, {
                     method: "DELETE"
                 });
                 if (!response.ok) {
-                    // //console.log(response)
-                    throw new Error(alert(("Failed to delete Task😢")));
+                    throw new Error("Failed to delete Task😢");
                 }
                 alert("Task deleted successfully👍");
-                fetchData(); // Refresh data after deletion
+                fetchData();
             } catch (error) {
-                //console.error("Error:", error.message);
+                // console.error("Error:", error.message);
             }
         }
 
-
-
-        //////PATCH request
         async function editTask(id, currentTitle, currentDescription) {
             const newTitle = prompt("Enter new task title:", currentTitle);
-            if (!newTitle) return; // If the user cancels or leaves the input empty
+            if (!newTitle) return;
 
             const newDescription = prompt("Enter new task description:", currentDescription);
-            if (!newDescription) return; // If the user cancels or leaves the input empty
+            if (!newDescription) return;
 
             try {
-                const response = await fetch(`http://localhost:3000/todos/${id}`, {
+                const response = await fetch(`http://localhost:3000/api/todos/${id}`, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json"
@@ -412,8 +410,10 @@
                 alert(`An error occurred: ${error.message}`);
             }
         }
-
     </script>
+</body>
+
+</html>
 
 
 </body>
