@@ -20,8 +20,7 @@ Welcome to my Full Stack To-Do App! This application allows you to manage your t
   - Express.js
   - MongoDB
 - **Deployment:**
-  - render
-  - link: https://fullstacktodo-asinhonore.onrender.com/
+  - render: https://fullstacktodo-asinhonore.onrender.com
 
 
 ## Usage
