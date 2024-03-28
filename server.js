@@ -37,10 +37,10 @@ app.get("/signup", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login", { message: {} });
+  res.render("login");
 });
 
-const Port = process.env.PORT || 3000;
+const Port = process.env.PORT;
 app.listen(Port, () => {
   console.log(`Server is running on port ${Port}`);
 });
