@@ -72,8 +72,12 @@ router.post("/login", async (req, res) => {
     }
     const token = generateToken(user);
 
-    // Set token in the cookie
-    res.cookie("token", token, { httpOnly: true });
+    // Set token in the cookie with secure and sameSite attributes
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true, // Ensures the cookie is only sent over HTTPS
+      sameSite: "strict", // Ensures the cookie is sent only in first-party contexts
+    });
 
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
