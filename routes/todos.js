@@ -22,21 +22,20 @@ function generateToken(user) {
 
 const isAuthenticated = (req, res, next) => {
   const token = req.cookies.token;
-  const path = req.path;
 
-  if (path === "/" && !token) {
-    return res
-      .status(401)
-      .send("Unauthorized: Please log in to access this page.");
+  // Check if token exists
+  if (!token) {
+    return res.status(401).send("Unauthorized: Token not provided");
   }
 
   try {
+    // Verify token using the correct secret key
     const decoded = jwt.verify(token, secretKey);
     req.user = decoded;
     next();
   } catch (error) {
     console.error("Error authenticating user:", error);
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
 
@@ -72,7 +71,10 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid username or password" });
     }
     const token = generateToken(user);
+
+    // Set token in the cookie
     res.cookie("token", token, { httpOnly: true });
+
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
     console.error("Error logging in user:", error);
