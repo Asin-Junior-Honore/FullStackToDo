@@ -6,10 +6,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const todosRouter = require("./routes/todos");
 
-// Load environment variables
 dotenv.config();
 
-// Set up view engine and connect to database
 app.set("view engine", "ejs");
 mongoose.connect(process.env.Databaseurl, {
   useNewUrlParser: true,
@@ -19,6 +17,8 @@ const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
 
+// Trust the first proxy
+app.set("trust proxy", 1);
 
 app.use(express.json());
 app.use(cors());

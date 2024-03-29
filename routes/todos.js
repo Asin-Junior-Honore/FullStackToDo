@@ -5,7 +5,6 @@ const Todo = require("../models/todos");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 
-// Generate JWT secret key
 const secretKey = require("crypto").randomBytes(64).toString("hex");
 
 router.use(cookieParser());
@@ -23,13 +22,11 @@ function generateToken(user) {
 const isAuthenticated = (req, res, next) => {
   const token = req.cookies.token;
 
-  // Check if token exists
   if (!token) {
     return res.status(401).send("Unauthorized: Token not provided");
   }
 
   try {
-    // Verify token using the correct secret key
     const decoded = jwt.verify(token, secretKey);
     req.user = decoded;
     next();
@@ -72,11 +69,13 @@ router.post("/login", async (req, res) => {
     }
     const token = generateToken(user);
 
-    // Set token in the cookie with secure and sameSite attributes
+    // Set the cookie domain
+    const cookieDomain = "render.com"; // Replace "yourdomain.com" with your actual domain
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // Ensures the cookie is only sent over HTTPS
-      sameSite: "none", // Allows the cookie to be sent in cross-site requests
+      secure: true,
+      sameSite: "none",
+      domain: cookieDomain,
     });
 
     res.status(200).json({ message: "Login successful", token });
