@@ -20,8 +20,6 @@ Welcome to my Full Stack To-Do App! This application allows you to manage your t
   - MongoDB
 - **Authentication:**
   - JSON Web Tokens (JWT) for signup and login authentication
-- **Deployment:**
-  - render: [https://fullstacktodo-asinhonore.onrender.com](https://fullstacktodo-asinhonore.onrender.com)
 
 ## Usage
 
@@ -29,3 +27,11 @@ Welcome to my Full Stack To-Do App! This application allows you to manage your t
 - **Read:** All tasks are displayed on the main page. Click on any task to view its details.
 - **Update:** To edit a task's details, click on the "Edit" button next to the delete button.
 - **Delete:** To remove a task, click on the "Delete" button next to the edit button.
+
+## Installation
+
+1. Clone this repository using `git
+2. insert your mongoDB URI in .env file
+3. suggest any port number you want to use(default is 3000) and place it in your .env file aswell
+4. Run `npm install` from root
+5. Start server by running `nodemon server.js` or npm run devStart

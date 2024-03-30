@@ -68,14 +68,10 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid username or password" });
     }
     const token = generateToken(user);
-
-    // Set the cookie domain
-    const cookieDomain = "fullstacktodo-asinhonore.onrender.com"; // Replace "yourdomain.com" with your actual domain
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: cookieDomain,
     });
 
     res.status(200).json({ message: "Login successful", token });
